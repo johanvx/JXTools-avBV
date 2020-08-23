@@ -3,4 +3,5 @@
     <string name="button_label">Transform</string>
     <string name="input_label">Your code/link</string>
     <string name="hello_world">Hello world!</string>
+    <string name="hint">https://www.bilibili.com/video/</string>
 </resources>

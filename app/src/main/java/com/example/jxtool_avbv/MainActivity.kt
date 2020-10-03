@@ -1,6 +1,6 @@
 /*
  * JXTool-avBV
- * By Johan Xie 2020
+ * By Johan Xie, 2020
  */
 
 package com.example.jxtool_avbv
@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import kotlin.math.pow
+import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,11 +45,13 @@ class MainActivity : AppCompatActivity() {
 
     // Check the validity of the input
     private fun isValid(input: String) : Boolean {
+        // If the input has prefix "https"
         if (input.indexOf("https") >= 0) {
             if (input.indexOf(prefix) < 0) {
                 return false
             }
         }
+        // If the input is of mode "av"
         val avIndex = input.indexOf("av")
         if (avIndex >= 0) {
             val avTmp = input.substring(avIndex + 2)
@@ -56,13 +59,15 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
         }
-        val bvIndex = input.indexOf("BV")
+        // If the input is of mode "BV" (or "bv")
+        val bvIndex = max(input.indexOf("BV"), input.indexOf("bv"))
         if (bvIndex >= 0) {
             val bvTmp = input.substring(bvIndex).toCharArray()
             for (i in place) {
                 bvTmp[i] = '_'
             }
-            if (bvTmp.joinToString(separator = "") != model) {
+            // check if the input corresponds to the model
+            if (bvTmp.joinToString(separator = "").substring(2) != model.substring(2)) {
                 return false
             }
         }
@@ -77,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         var ret = "Not defined"
         if (input.indexOf("av") >= 0) {
             ret = "av"
-        } else if (input.indexOf("BV") >= 0) {
+        } else if (max(input.indexOf("BV"), input.indexOf("bv")) >= 0) {
             ret = "BV"
         }
         return ret
@@ -107,14 +112,14 @@ class MainActivity : AppCompatActivity() {
     private fun tranMain() : String {
         val inputText: EditText = findViewById(R.id.input_text)
         val input = inputText.getText().toString()
-        var output = "Input invalid"
+        var output = "Invalid input"
         if (isValid(input)) {
             val inputStatus = statusJudge(input)
             if (inputStatus == "av") {
                 val av = input.substring(input.indexOf("av") + 2).toLong()
                 output = avToBv(av)
             } else if (inputStatus == "BV") {
-                val BV = input.substring(input.indexOf("BV"))
+                val BV = input.substring(max(input.indexOf("BV"), input.indexOf("bv")))
                 output = "av${bvToAv(BV).toString()}"
             }
             if (input.indexOf("https") >= 0) {
